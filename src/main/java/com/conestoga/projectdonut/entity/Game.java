@@ -29,6 +29,9 @@ public class Game {
 
     private String briefDescription;
 
+    @Lob
+    private String fullDescription;
+
     private int followers;
 
     private String version;

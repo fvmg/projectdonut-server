@@ -26,7 +26,11 @@ public class GameService {
     }
 
     public Game getGame(int gameId) {
-        return gameRepository.findById(gameId).orElse(null);
+        Game game = gameRepository.findById(gameId).orElse(null);
+        if (game != null) {
+            game.setCoverImage(this.decompressBytes(game.getCoverImage()));
+        }
+        return game;
     }
 
     public List<GenreGamesDto> getGames() {
