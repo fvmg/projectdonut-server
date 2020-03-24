@@ -37,7 +37,4 @@ public class User {
 
     @OneToMany
     private List<Job> recommendedJobs;
-
-    @OneToMany
-    private List<GameRating> gameRatings;
 }

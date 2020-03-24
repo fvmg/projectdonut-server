@@ -1,9 +1,15 @@
 package com.conestoga.projectdonut.service;
 
+import com.conestoga.projectdonut.dto.GameDto;
 import com.conestoga.projectdonut.dto.GenreGamesDto;
+import com.conestoga.projectdonut.dto.RateGameDto;
 import com.conestoga.projectdonut.entity.Game;
+import com.conestoga.projectdonut.entity.GameRating;
 import com.conestoga.projectdonut.entity.Genre;
+import com.conestoga.projectdonut.entity.User;
+import com.conestoga.projectdonut.repository.GameRatingRepository;
 import com.conestoga.projectdonut.repository.GameRepository;
+import com.conestoga.projectdonut.repository.UserRepository;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -21,16 +27,35 @@ public class GameService {
     @Autowired
     private GameRepository gameRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private GameRatingRepository gameRatingRepository;
+
     public Game saveGame(Game game) {
         return gameRepository.save(game);
     }
 
-    public Game getGame(int gameId) {
+    public GameDto getGame(int gameId) {
+        GameDto gameDto = new GameDto();
         Game game = gameRepository.findById(gameId).orElse(null);
+        List<GameRating> gameRatings = gameRatingRepository.findAllByGame(game);
         if (game != null) {
             game.setCoverImage(this.decompressBytes(game.getCoverImage()));
         }
-        return game;
+        gameDto.setGame(game);
+        gameDto.setRating(calculateRating(gameRatings));
+        gameDto.setRatingNumber(gameRatings.size());
+        return gameDto;
+    }
+
+    private double calculateRating(List<GameRating> gameRatings) {
+        double sum = 0D;
+        for (GameRating gameRating : gameRatings) {
+            sum += gameRating.getRating();
+        }
+        return !gameRatings.isEmpty() ? sum / gameRatings.size() : 0D;
     }
 
     public List<GenreGamesDto> getGames() {
@@ -95,5 +120,16 @@ public class GameService {
         } catch (DataFormatException e) {
         }
         return outputStream.toByteArray();
+    }
+
+    public void rateGame(RateGameDto rateGameDto) {
+        User user = userRepository.getOne(rateGameDto.getUserId());
+        Game game = gameRepository.getOne(rateGameDto.getGameId());
+        GameRating gameRating = new GameRating();
+        gameRating.setComment(rateGameDto.getComments());
+        gameRating.setRating(rateGameDto.getRating());
+        gameRating.setUser(user);
+        gameRating.setGame(game);
+        gameRatingRepository.save(gameRating);
     }
 }

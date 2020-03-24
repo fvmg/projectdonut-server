@@ -1,6 +1,8 @@
 package com.conestoga.projectdonut.controller;
 
+import com.conestoga.projectdonut.dto.GameDto;
 import com.conestoga.projectdonut.dto.GenreGamesDto;
+import com.conestoga.projectdonut.dto.RateGameDto;
 import com.conestoga.projectdonut.entity.Game;
 import com.conestoga.projectdonut.entity.Genre;
 import com.conestoga.projectdonut.repository.GenreRepository;
@@ -12,6 +14,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -48,7 +52,7 @@ public class GameController {
     }
 
     @GetMapping("/get")
-    public Game getGame(@RequestParam int id) {
+    public GameDto getGame(@RequestParam int id) {
         return gameService.getGame(id);
     }
 
@@ -56,5 +60,11 @@ public class GameController {
     public List<GenreGamesDto> getGames() {
         List<GenreGamesDto> games = gameService.getGames();
         return games;
+    }
+
+    @PostMapping("/rateGame")
+    public ResponseEntity<?> rateGame(@RequestBody RateGameDto rateGameDto) {
+        gameService.rateGame(rateGameDto);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

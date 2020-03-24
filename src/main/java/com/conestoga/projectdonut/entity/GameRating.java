@@ -24,4 +24,7 @@ public class GameRating {
     private double rating;
 
     private String comment;
+
+    @OneToOne
+    private User user;
 }
