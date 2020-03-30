@@ -2,6 +2,7 @@ package com.conestoga.projectdonut.service;
 
 
 import com.conestoga.projectdonut.dto.UserLoginDto;
+import com.conestoga.projectdonut.entity.Game;
 import com.conestoga.projectdonut.entity.User;
 import com.conestoga.projectdonut.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,5 +43,21 @@ public class UserService {
         else {
             return null;
         }
+    }
+
+    public void saveGame(Game game, String userId) {
+        User user = userRepository.getOne(Integer.parseInt(userId));
+        user.addCreatedGame(game);
+        userRepository.save(user);
+    }
+
+    public User checkOwner(int userId, int gameId) {
+        User user = userRepository.getOne(userId);
+        for (Game game : user.getCreatedGames()) {
+            if (game.getId() == gameId) {
+                return user;
+            }
+        }
+        return null;
     }
 }

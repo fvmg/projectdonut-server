@@ -49,4 +49,14 @@ public class Game {
     @Column(columnDefinition = "LONGBLOB")
     private byte[] coverImage;
 
+    public void setBaseGenre(Genre baseGenre) {
+        for (Genre genre : genres) {
+            if (genre.getBaseGenre()) {
+                genres.remove(genre);
+                break;
+            }
+        }
+        genres.add(baseGenre);
+    }
+
 }

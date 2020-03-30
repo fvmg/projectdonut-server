@@ -37,4 +37,8 @@ public class User {
 
     @OneToMany
     private List<Job> recommendedJobs;
+
+    public void addCreatedGame(Game game) {
+        this.createdGames.add(game);
+    }
 }

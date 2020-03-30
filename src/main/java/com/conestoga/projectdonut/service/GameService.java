@@ -31,10 +31,29 @@ public class GameService {
     private UserRepository userRepository;
 
     @Autowired
+    private UserService userService;
+
+    @Autowired
     private GameRatingRepository gameRatingRepository;
 
-    public Game saveGame(Game game) {
-        return gameRepository.save(game);
+    public Game updateGame(Game game, Genre baseGenre) {
+        Game updateGame = gameRepository.getOne(game.getId());
+        updateGame.setBriefDescription(game.getBriefDescription());
+        updateGame.setFullDescription(game.getFullDescription());
+        updateGame.setName(game.getName());
+        updateGame.setReleaseDate(game.getReleaseDate());
+        updateGame.setVersion(game.getVersion());
+        updateGame.setDownloadLink(game.getDownloadLink());
+        if (game.getCoverImage() != null) {
+            updateGame.setCoverImage(game.getCoverImage());
+        }
+        return gameRepository.save(updateGame);
+    }
+
+    public Game saveGame(Game game, String userId) {
+        game = gameRepository.save(game);
+        userService.saveGame(game, userId);
+        return game;
     }
 
     public GameDto getGame(int gameId) {

@@ -38,17 +38,23 @@ public class GameController {
     private GenreService genreService;
 
     @PostMapping("/createGame")
-    public Game createGame(@RequestParam("coverImage") MultipartFile coverImage, @RequestParam("gameData") String gameData,
-            @RequestParam("gameGenre") String gameGenre)
+    public Game createGame(@RequestParam(value = "coverImage", required = false) MultipartFile coverImage,
+            @RequestParam("gameData") String gameData,
+            @RequestParam("gameGenre") String gameGenre, @RequestParam("userId") String userId)
             throws IOException {
         Genre genre = genreService.getByName(gameGenre);
         List<Genre> genres = new ArrayList<>();
         genres.add(genre);
         Game game = new ObjectMapper().readValue(gameData, Game.class);
+        if (coverImage != null) {
+            game.setCoverImage(gameService.compressBytes(coverImage.getBytes()));
+        }
+        if (game.getId() > 0) {
+            return gameService.updateGame(game, genre);
+        }
         game.setGenres(genres);
-        game.setCoverImage(gameService.compressBytes(coverImage.getBytes()));
         game.setFollowers(1);
-        return gameService.saveGame(game);
+        return gameService.saveGame(game, userId);
     }
 
     @GetMapping("/get")
