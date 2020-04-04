@@ -3,18 +3,30 @@ package com.conestoga.projectdonut.service;
 import com.conestoga.projectdonut.dto.JobDto;
 import com.conestoga.projectdonut.entity.Game;
 import com.conestoga.projectdonut.entity.Job;
+import com.conestoga.projectdonut.entity.JobApplication;
+import com.conestoga.projectdonut.entity.User;
 import com.conestoga.projectdonut.repository.GameRepository;
+import com.conestoga.projectdonut.repository.JobApplicationRepository;
 import com.conestoga.projectdonut.repository.JobRepository;
+import com.conestoga.projectdonut.repository.UserRepository;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 public class JobService {
 
     @Autowired
     private JobRepository jobRepository;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private JobApplicationRepository jobApplicationRepository;
 
     @Autowired
     private GameRepository gameRepository;
@@ -76,5 +88,18 @@ public class JobService {
             jobDtos.add(jobDto);
         }
         return jobDtos;
+    }
+
+    public void applyJob(String jobId, String userId, MultipartFile resume, MultipartFile coverLetter) throws IOException {
+        Job job = jobRepository.getOne(Integer.parseInt(jobId));
+        User user = userRepository.getOne(Integer.parseInt(userId));
+        JobApplication jobApplication = new JobApplication();
+        jobApplication.setJob(job);
+        jobApplication.setUser(user);
+        jobApplication.setResume(gameService.compressBytes(resume.getBytes()));
+        if (coverLetter != null) {
+            jobApplication.setCoverLetter(gameService.compressBytes(coverLetter.getBytes()));
+        }
+        jobApplicationRepository.save(jobApplication);
     }
 }

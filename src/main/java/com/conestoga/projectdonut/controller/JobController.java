@@ -7,12 +7,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @CrossOrigin
@@ -46,6 +49,14 @@ public class JobController {
     @GetMapping("/getAllList")
     public List<JobDto> getAllList() {
         return jobService.getAllList();
+    }
+
+    @PostMapping("/applyJob")
+    public ResponseEntity<?> applyJob(@RequestParam(value = "resume") MultipartFile resume,
+            @RequestParam(value = "coverLetter", required = false) MultipartFile coverLetter,
+            @RequestParam("jobId") String jobId, @RequestParam("userId") String userId) throws IOException {
+        jobService.applyJob(jobId, userId, resume, coverLetter);
+        return new ResponseEntity(HttpStatus.OK);
     }
 
 }
