@@ -11,7 +11,7 @@ public class RateGameDto {
 
     private int userId;
 
-    private int rating;
+    private double rating;
 
     private String comments;
 

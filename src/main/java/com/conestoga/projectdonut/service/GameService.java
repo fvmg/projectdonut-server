@@ -6,6 +6,7 @@ import com.conestoga.projectdonut.dto.RateGameDto;
 import com.conestoga.projectdonut.entity.Game;
 import com.conestoga.projectdonut.entity.GameRating;
 import com.conestoga.projectdonut.entity.Genre;
+import com.conestoga.projectdonut.entity.Job;
 import com.conestoga.projectdonut.entity.User;
 import com.conestoga.projectdonut.repository.GameRatingRepository;
 import com.conestoga.projectdonut.repository.GameRepository;
@@ -54,6 +55,12 @@ public class GameService {
         game = gameRepository.save(game);
         userService.saveGame(game, userId);
         return game;
+    }
+
+    public void saveJob(Job job, String gameId) {
+        Game game = gameRepository.getOne(Integer.parseInt(gameId));
+        game.addJob(job);
+        gameRepository.save(game);
     }
 
     public GameDto getGame(int gameId) {
@@ -150,5 +157,15 @@ public class GameService {
         gameRating.setUser(user);
         gameRating.setGame(game);
         gameRatingRepository.save(gameRating);
+    }
+
+    public boolean containsJob(String gameId, Job job) {
+        Game game = gameRepository.getOne(Integer.parseInt(gameId));
+        for (Job gameJob : game.getJobs()) {
+            if (gameJob.equals(job)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

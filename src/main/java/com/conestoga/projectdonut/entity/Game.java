@@ -59,4 +59,8 @@ public class Game {
         genres.add(baseGenre);
     }
 
+    public void addJob(Job job) {
+        jobs.add(job);
+    }
+
 }

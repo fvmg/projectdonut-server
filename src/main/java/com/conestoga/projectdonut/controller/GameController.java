@@ -4,8 +4,10 @@ import com.conestoga.projectdonut.dto.GameDto;
 import com.conestoga.projectdonut.dto.GenreGamesDto;
 import com.conestoga.projectdonut.dto.RateGameDto;
 import com.conestoga.projectdonut.entity.Game;
+import com.conestoga.projectdonut.entity.GameRating;
 import com.conestoga.projectdonut.entity.Genre;
 import com.conestoga.projectdonut.repository.GenreRepository;
+import com.conestoga.projectdonut.service.GameRatingService;
 import com.conestoga.projectdonut.service.GameService;
 import com.conestoga.projectdonut.service.GenreService;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -37,6 +39,9 @@ public class GameController {
     @Autowired
     private GenreService genreService;
 
+    @Autowired
+    private GameRatingService gameRatingService;
+
     @PostMapping("/createGame")
     public Game createGame(@RequestParam(value = "coverImage", required = false) MultipartFile coverImage,
             @RequestParam("gameData") String gameData,
@@ -66,6 +71,11 @@ public class GameController {
     public List<GenreGamesDto> getGames() {
         List<GenreGamesDto> games = gameService.getGames();
         return games;
+    }
+
+    @GetMapping("/getComments")
+    public List<RateGameDto> getComments(@RequestParam int gameId) {
+        return gameRatingService.getComments(gameId);
     }
 
     @PostMapping("/rateGame")
