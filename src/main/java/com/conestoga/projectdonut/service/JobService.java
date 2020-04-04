@@ -1,6 +1,9 @@
 package com.conestoga.projectdonut.service;
 
+import com.conestoga.projectdonut.dto.JobDto;
+import com.conestoga.projectdonut.entity.Game;
 import com.conestoga.projectdonut.entity.Job;
+import com.conestoga.projectdonut.repository.GameRepository;
 import com.conestoga.projectdonut.repository.JobRepository;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,6 +15,9 @@ public class JobService {
 
     @Autowired
     private JobRepository jobRepository;
+
+    @Autowired
+    private GameRepository gameRepository;
 
     @Autowired
     private GameService gameService;
@@ -49,5 +55,26 @@ public class JobService {
             finalJobs = jobs;
         }
         return finalJobs;
+    }
+
+    public List<JobDto> getAllList() {
+        List<Job> jobs = jobRepository.findAll();
+        List<JobDto> jobDtos = new ArrayList<>();
+        for (Job job : jobs) {
+            JobDto jobDto = new JobDto();
+            int gameId = jobRepository.getGameId(job.getId());
+            jobDto.setGameId(gameId);
+            Game game = gameRepository.getOne(gameId);
+            jobDto.setGameName(game.getName());
+            jobDto.setCoverImage(gameService.getGameImg(gameId));
+            jobDto.setName(job.getName());
+            jobDto.setDescription(job.getDescription());
+            if (jobDto.getDescription().length() > 250) {
+                String description = jobDto.getDescription().substring(0, 250) + "...";
+                jobDto.setDescription(description);
+            }
+            jobDtos.add(jobDto);
+        }
+        return jobDtos;
     }
 }

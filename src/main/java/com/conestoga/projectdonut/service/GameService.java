@@ -111,6 +111,11 @@ public class GameService {
         }
     }
 
+    public byte[] getGameImg(int gameId) {
+        Game game = gameRepository.getOne(gameId);
+        return decompressBytes(game.getCoverImage());
+    }
+
     public byte[] compressBytes(byte[] data) {
         Deflater deflater = new Deflater();
         deflater.setInput(data);

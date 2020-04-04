@@ -1,5 +1,6 @@
 package com.conestoga.projectdonut.controller;
 
+import com.conestoga.projectdonut.dto.JobDto;
 import com.conestoga.projectdonut.entity.Job;
 import com.conestoga.projectdonut.service.JobService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -38,8 +39,13 @@ public class JobController {
     }
 
     @GetMapping("/getAll")
-    public List<Job> getJobs(@RequestParam(value = "gameId", required = false) String gameId) {
+    public List<Job> getJobs(@RequestParam(value = "gameId") String gameId) {
         return jobService.getAll(gameId);
+    }
+
+    @GetMapping("/getAllList")
+    public List<JobDto> getAllList() {
+        return jobService.getAllList();
     }
 
 }
