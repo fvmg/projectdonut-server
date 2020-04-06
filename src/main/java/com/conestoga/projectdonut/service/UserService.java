@@ -60,4 +60,14 @@ public class UserService {
         }
         return null;
     }
+
+    public User checkFollower(int userId, int gameId) {
+        User user = userRepository.getOne(userId);
+        for (Game game : user.getFollowedGames()) {
+            if (game.getId() == gameId) {
+                return user;
+            }
+        }
+        return null;
+    }
 }

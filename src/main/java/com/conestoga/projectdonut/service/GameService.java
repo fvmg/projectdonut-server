@@ -4,10 +4,12 @@ import com.conestoga.projectdonut.dto.GameDto;
 import com.conestoga.projectdonut.dto.GenreGamesDto;
 import com.conestoga.projectdonut.dto.RateGameDto;
 import com.conestoga.projectdonut.entity.Game;
+import com.conestoga.projectdonut.entity.GameImage;
 import com.conestoga.projectdonut.entity.GameRating;
 import com.conestoga.projectdonut.entity.Genre;
 import com.conestoga.projectdonut.entity.Job;
 import com.conestoga.projectdonut.entity.User;
+import com.conestoga.projectdonut.repository.GameImageRepository;
 import com.conestoga.projectdonut.repository.GameRatingRepository;
 import com.conestoga.projectdonut.repository.GameRepository;
 import com.conestoga.projectdonut.repository.UserRepository;
@@ -21,6 +23,7 @@ import java.util.zip.Deflater;
 import java.util.zip.Inflater;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 public class GameService {
@@ -36,6 +39,9 @@ public class GameService {
 
     @Autowired
     private GameRatingRepository gameRatingRepository;
+
+    @Autowired
+    private GameImageRepository gameImageRepository;
 
     public Game updateGame(Game game, Genre baseGenre) {
         Game updateGame = gameRepository.getOne(game.getId());
@@ -172,5 +178,38 @@ public class GameService {
             }
         }
         return false;
+    }
+
+    public void followGame(String userId, String gameId, String action) {
+        User user = userRepository.getOne(Integer.parseInt(userId));
+        Game game = gameRepository.getOne(Integer.parseInt(gameId));
+        if (Boolean.parseBoolean(action)) {
+            user.addFollowedGame(game);
+        } else {
+            user.deleteFollowedGame(game);
+        }
+        userRepository.save(user);
+    }
+
+    public Integer getFollowers(int gameId) {
+        return gameRepository.getFollowers(gameId);
+    }
+
+    public void addImage(String gameId, MultipartFile image) throws IOException {
+        Game game = gameRepository.getOne(Integer.parseInt(gameId));
+        GameImage gameImage = new GameImage();
+        gameImage.setImage(compressBytes(image.getBytes()));
+        gameImage = gameImageRepository.save(gameImage);
+        game.addImage(gameImage);
+        gameRepository.save(game);
+    }
+
+    public List<GameImage> getImages(int gameId) {
+        Game game = gameRepository.getOne(gameId);
+        List<GameImage> gameImages = game.getImages();
+        for (GameImage gameImage : gameImages) {
+            gameImage.setImage(decompressBytes(gameImage.getImage()));
+        }
+        return gameImages;
     }
 }

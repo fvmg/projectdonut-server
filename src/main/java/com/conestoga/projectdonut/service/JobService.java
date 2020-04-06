@@ -1,5 +1,6 @@
 package com.conestoga.projectdonut.service;
 
+import com.conestoga.projectdonut.dto.JobApplicationDto;
 import com.conestoga.projectdonut.dto.JobDto;
 import com.conestoga.projectdonut.entity.Game;
 import com.conestoga.projectdonut.entity.Job;
@@ -52,6 +53,23 @@ public class JobService {
     public Job getJob(int jobId) {
         Job job = jobRepository.findById(jobId).orElse(null);
         return job;
+    }
+
+    public List<JobApplicationDto> getApplications(int jobId) {
+        Job job = jobRepository.getOne(jobId);
+        List<JobApplication> jobApplications = jobApplicationRepository.findAllByJob(job);
+        List<JobApplicationDto> jobApplicationDtos = new ArrayList<>();
+        for (JobApplication jobApplication : jobApplications) {
+            JobApplicationDto jobApplicationDto = new JobApplicationDto();
+            jobApplicationDto.setEmail(jobApplication.getUser().getEmail());
+            jobApplicationDto.setName(jobApplication.getUser().getLastName() + ", " + jobApplication.getUser().getFirstName());
+            jobApplicationDto.setResume(gameService.decompressBytes(jobApplication.getResume()));
+            if (jobApplication.getCoverLetter() != null) {
+                jobApplicationDto.setCoverLetter(gameService.decompressBytes(jobApplication.getCoverLetter()));
+            }
+            jobApplicationDtos.add(jobApplicationDto);
+        }
+        return jobApplicationDtos;
     }
 
     public List<Job> getAll(String gameId) {

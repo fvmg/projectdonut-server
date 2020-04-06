@@ -1,5 +1,6 @@
 package com.conestoga.projectdonut.controller;
 
+import com.conestoga.projectdonut.dto.JobApplicationDto;
 import com.conestoga.projectdonut.dto.JobDto;
 import com.conestoga.projectdonut.entity.Job;
 import com.conestoga.projectdonut.service.JobService;
@@ -39,6 +40,11 @@ public class JobController {
     @GetMapping("/get")
     public Job getJob(@RequestParam int id) {
         return jobService.getJob(id);
+    }
+
+    @GetMapping("/getApplications")
+    public List<JobApplicationDto> getApplications(@RequestParam int id) {
+        return jobService.getApplications(id);
     }
 
     @GetMapping("/getAll")

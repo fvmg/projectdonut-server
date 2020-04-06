@@ -55,4 +55,13 @@ public class UserController {
         }
         return new ResponseEntity<>(HttpStatus.FORBIDDEN);
     }
+
+    @GetMapping("/checkFollower")
+    public ResponseEntity<?> checkFollower(@RequestParam int userId, @RequestParam int gameId) {
+        User user = userService.checkFollower(userId, gameId);
+        if (user != null) {
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+    }
 }

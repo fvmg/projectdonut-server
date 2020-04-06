@@ -4,6 +4,7 @@ import com.conestoga.projectdonut.dto.GameDto;
 import com.conestoga.projectdonut.dto.GenreGamesDto;
 import com.conestoga.projectdonut.dto.RateGameDto;
 import com.conestoga.projectdonut.entity.Game;
+import com.conestoga.projectdonut.entity.GameImage;
 import com.conestoga.projectdonut.entity.GameRating;
 import com.conestoga.projectdonut.entity.Genre;
 import com.conestoga.projectdonut.repository.GenreRepository;
@@ -58,7 +59,6 @@ public class GameController {
             return gameService.updateGame(game, genre);
         }
         game.setGenres(genres);
-        game.setFollowers(1);
         return gameService.saveGame(game, userId);
     }
 
@@ -78,9 +78,33 @@ public class GameController {
         return gameRatingService.getComments(gameId);
     }
 
+    @GetMapping("/getImages")
+    public List<GameImage> getImages(@RequestParam int gameId) {
+        return gameService.getImages(gameId);
+    }
+
+    @GetMapping("/getFollowers")
+    public Integer getFollowers(@RequestParam int gameId) {
+        return gameService.getFollowers(gameId);
+    }
+
     @PostMapping("/rateGame")
     public ResponseEntity<?> rateGame(@RequestBody RateGameDto rateGameDto) {
         gameService.rateGame(rateGameDto);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PostMapping("/followGame")
+    public ResponseEntity<?> followGame(@RequestParam("gameId") String gameId, @RequestParam("userId") String userId,
+            @RequestParam("action") String action) {
+        gameService.followGame(userId, gameId, action);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PostMapping("/addImage")
+    public ResponseEntity<?> addImage(@RequestParam("gameId") String gameId, @RequestParam(value = "image") MultipartFile image)
+            throws IOException {
+        gameService.addImage(gameId, image);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

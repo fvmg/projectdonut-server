@@ -32,8 +32,6 @@ public class Game {
     @Lob
     private String fullDescription;
 
-    private int followers;
-
     private String version;
 
     private String downloadLink;
@@ -45,6 +43,9 @@ public class Game {
 
     @OneToMany(fetch = FetchType.EAGER,cascade = CascadeType.PERSIST)
     private List<Job> jobs;
+
+    @OneToMany(fetch = FetchType.LAZY,cascade = CascadeType.PERSIST)
+    private List<GameImage> images;
 
     @Column(columnDefinition = "LONGBLOB")
     private byte[] coverImage;
@@ -61,6 +62,10 @@ public class Game {
 
     public void addJob(Job job) {
         jobs.add(job);
+    }
+
+    public void addImage(GameImage gameImage) {
+        images.add(gameImage);
     }
 
 }

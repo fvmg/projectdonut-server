@@ -33,6 +33,9 @@ public class User {
     private List<Game> createdGames;
 
     @OneToMany
+    private List<Game> followedGames;
+
+    @OneToMany
     private List<Game> recommendedGames;
 
     @OneToMany
@@ -40,5 +43,13 @@ public class User {
 
     public void addCreatedGame(Game game) {
         this.createdGames.add(game);
+    }
+
+    public void addFollowedGame(Game game) {
+        this.followedGames.add(game);
+    }
+
+    public void deleteFollowedGame(Game game) {
+        this.followedGames.remove(game);
     }
 }
