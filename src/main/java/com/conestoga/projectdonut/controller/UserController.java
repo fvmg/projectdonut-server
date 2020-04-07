@@ -1,5 +1,6 @@
 package com.conestoga.projectdonut.controller;
 
+import com.conestoga.projectdonut.dto.UserDto;
 import com.conestoga.projectdonut.dto.UserLoginDto;
 import com.conestoga.projectdonut.entity.User;
 import com.conestoga.projectdonut.service.UserService;
@@ -25,6 +26,11 @@ public class UserController {
     @PostMapping("/register")
     public User register(@RequestBody User user) {
         return userService.registerUser(user);
+    }
+
+    @PostMapping("/updateUser")
+    public User updateUser(@RequestBody User user) {
+        return userService.updateUser(user);
     }
 
     @PostMapping("/login")
@@ -54,6 +60,11 @@ public class UserController {
             return new ResponseEntity<>(HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+    }
+
+    @GetMapping("/getUser")
+    public UserDto getUser(@RequestParam int userId) {
+        return userService.getUser(userId);
     }
 
     @GetMapping("/checkFollower")

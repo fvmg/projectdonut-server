@@ -1,6 +1,7 @@
 package com.conestoga.projectdonut.service;
 
 import com.conestoga.projectdonut.dto.GameDto;
+import com.conestoga.projectdonut.dto.GameForYouDto;
 import com.conestoga.projectdonut.dto.GenreGamesDto;
 import com.conestoga.projectdonut.dto.RateGameDto;
 import com.conestoga.projectdonut.entity.Game;
@@ -211,5 +212,49 @@ public class GameService {
             gameImage.setImage(decompressBytes(gameImage.getImage()));
         }
         return gameImages;
+    }
+
+    public List<GameForYouDto> getForYouGames(int userId) {
+        List<Integer> gameIds = gameRepository.getForYouGameIds(userId);
+        List<Game> games = gameRepository.findAllById(gameIds);
+        List<GameForYouDto> gameForYouDtos = new ArrayList<>();
+        for (Game game : games) {
+            GameForYouDto gameForYouDto = new GameForYouDto();
+            gameForYouDto.setId(game.getId());
+            gameForYouDto.setCoverImage(decompressBytes(game.getCoverImage()));
+            gameForYouDto.setName(game.getName());
+            gameForYouDto.setGenre(game.getBaseGenre() != null ? game.getBaseGenre().getName() : null);
+            gameForYouDto.setDescription(game.getFullDescription());
+            if (gameForYouDto.getDescription().length() > 250) {
+                String description = gameForYouDto.getDescription().substring(0, 250) + "...";
+                gameForYouDto.setDescription(description);
+            }
+            gameForYouDtos.add(gameForYouDto);
+        }
+        return gameForYouDtos;
+    }
+
+    public void recommendGame() {
+        List<User> users = userRepository.findAll();
+        List<Integer> userIds = new ArrayList<>();
+        for (User user : users) {
+            userIds.add(user.getId());
+        }
+        List<Game> games = gameRepository.findAllById(userIds);
+        List<GameForYouDto> gameForYouDtos = new ArrayList<>();
+        for (Game game : games) {
+            GameForYouDto jobDto = new GameForYouDto();
+            GameForYouDto gameForYouDto = new GameForYouDto();
+            gameForYouDto.setId(game.getId());
+            gameForYouDto.setCoverImage(decompressBytes(game.getCoverImage()));
+            gameForYouDto.setName(game.getName());
+            gameForYouDto.setGenre(game.getBaseGenre() != null ? game.getBaseGenre().getName() : null);
+            gameForYouDto.setDescription(game.getFullDescription());
+            if (gameForYouDto.getDescription().length() > 250) {
+                String description = gameForYouDto.getDescription().substring(0, 250) + "...";
+                gameForYouDto.setDescription(description);
+            }
+            gameForYouDtos.add(gameForYouDto);
+        }
     }
 }

@@ -1,6 +1,7 @@
 package com.conestoga.projectdonut.controller;
 
 import com.conestoga.projectdonut.dto.GameDto;
+import com.conestoga.projectdonut.dto.GameForYouDto;
 import com.conestoga.projectdonut.dto.GenreGamesDto;
 import com.conestoga.projectdonut.dto.RateGameDto;
 import com.conestoga.projectdonut.entity.Game;
@@ -106,5 +107,10 @@ public class GameController {
             throws IOException {
         gameService.addImage(gameId, image);
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @GetMapping("/getForYouGames")
+    public List<GameForYouDto> getForYouGames(@RequestParam(value = "userId") int userId) {
+        return gameService.getForYouGames(userId);
     }
 }

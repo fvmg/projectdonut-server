@@ -12,4 +12,7 @@ public interface JobRepository extends JpaRepository<Job, Integer> {
     @Query(nativeQuery = true, value = "select gj.game_id from game_jobs gj where gj.jobs_id = :jobId")
     Integer getGameId(@Param("jobId") int jobId);
 
+    @Query(nativeQuery = true, value = "select urj.recommended_jobs_id from user_recommended_jobs urj where urj.user_id = :userId")
+    List<Integer> getForYouJobIds(@Param("userId") int userId);
+
 }

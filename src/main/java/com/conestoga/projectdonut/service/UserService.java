@@ -1,6 +1,7 @@
 package com.conestoga.projectdonut.service;
 
 
+import com.conestoga.projectdonut.dto.UserDto;
 import com.conestoga.projectdonut.dto.UserLoginDto;
 import com.conestoga.projectdonut.entity.Game;
 import com.conestoga.projectdonut.entity.User;
@@ -18,11 +19,29 @@ public class UserService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    public UserDto getUser(int userId) {
+        User user = userRepository.getOne(userId);
+        UserDto userDto = new UserDto();
+        userDto.setId(user.getId());
+        userDto.setFirstName(user.getFirstName());
+        userDto.setLastName(user.getLastName());
+        userDto.setEmail(user.getEmail());
+        return userDto;
+    }
+
     public User registerUser(User user) {
         if (user != null) {
             user.setPassword(passwordEncoder.encode(user.getPassword()));
         }
         return userRepository.save(user);
+    }
+
+    public User updateUser(User user) {
+        User actualUser = userRepository.getOne(user.getId());
+        actualUser.setEmail(user.getEmail());
+        actualUser.setFirstName(user.getFirstName());
+        actualUser.setLastName(user.getLastName());
+        return userRepository.save(actualUser);
     }
 
     public User login(UserLoginDto userLoginDto) {

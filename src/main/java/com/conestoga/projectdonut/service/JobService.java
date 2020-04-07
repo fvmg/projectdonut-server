@@ -108,6 +108,28 @@ public class JobService {
         return jobDtos;
     }
 
+    public List<JobDto> getForYouJobs(int userId) {
+        List<Integer> jobIds = jobRepository.getForYouJobIds(userId);
+        List<Job> jobs = jobRepository.findAllById(jobIds);
+        List<JobDto> jobDtos = new ArrayList<>();
+        for (Job job : jobs) {
+            JobDto jobDto = new JobDto();
+            int gameId = jobRepository.getGameId(job.getId());
+            jobDto.setGameId(gameId);
+            Game game = gameRepository.getOne(gameId);
+            jobDto.setGameName(game.getName());
+            jobDto.setCoverImage(gameService.getGameImg(gameId));
+            jobDto.setName(job.getName());
+            jobDto.setDescription(job.getDescription());
+            if (jobDto.getDescription().length() > 250) {
+                String description = jobDto.getDescription().substring(0, 250) + "...";
+                jobDto.setDescription(description);
+            }
+            jobDtos.add(jobDto);
+        }
+        return jobDtos;
+    }
+
     public void applyJob(String jobId, String userId, MultipartFile resume, MultipartFile coverLetter) throws IOException {
         Job job = jobRepository.getOne(Integer.parseInt(jobId));
         User user = userRepository.getOne(Integer.parseInt(userId));
@@ -119,5 +141,30 @@ public class JobService {
             jobApplication.setCoverLetter(gameService.compressBytes(coverLetter.getBytes()));
         }
         jobApplicationRepository.save(jobApplication);
+    }
+
+    public void recommendJob() {
+        List<User> users = userRepository.findAll();
+        List<Integer> userIds = new ArrayList<>();
+        for (User user : users) {
+            userIds.add(user.getId());
+        }
+        List<Job> jobs = jobRepository.findAllById(userIds);
+        List<JobDto> jobDtos = new ArrayList<>();
+        for (Job job : jobs) {
+            JobDto jobDto = new JobDto();
+            int gameId = jobRepository.getGameId(job.getId());
+            jobDto.setGameId(gameId);
+            Game game = gameRepository.getOne(gameId);
+            jobDto.setGameName(game.getName());
+            jobDto.setCoverImage(gameService.getGameImg(gameId));
+            jobDto.setName(job.getName());
+            jobDto.setDescription(job.getDescription());
+            if (jobDto.getDescription().length() > 250) {
+                String description = jobDto.getDescription().substring(0, 250) + "...";
+                jobDto.setDescription(description);
+            }
+            jobDtos.add(jobDto);
+        }
     }
 }

@@ -65,4 +65,9 @@ public class JobController {
         return new ResponseEntity(HttpStatus.OK);
     }
 
+    @GetMapping("/getForYouJobs")
+    public List<JobDto> getForYouJobs(@RequestParam(value = "userId") int userId) {
+        return jobService.getForYouJobs(userId);
+    }
+
 }

@@ -60,6 +60,15 @@ public class Game {
         genres.add(baseGenre);
     }
 
+    public Genre getBaseGenre() {
+        for (Genre genre : genres) {
+            if (genre.getBaseGenre()) {
+                return genre;
+            }
+        }
+        return null;
+    }
+
     public void addJob(Job job) {
         jobs.add(job);
     }
